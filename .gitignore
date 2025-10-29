@@ -1,0 +1,35 @@
+# Compiled class files
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# IntelliJ / Eclipse / NetBeans project files
+*.iml
+*.ipr
+*.iws
+.idea/
+*.classpath
+*.project
+*.settings/
+nbproject/
+
+# Build directories
+bin/
+out/
+target/
+
+# Logs and debug files
+*.log
+hs_err_pid*
+replay_pid*
+
+# macOS artifacts
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VS Code settings
+.vscode/
