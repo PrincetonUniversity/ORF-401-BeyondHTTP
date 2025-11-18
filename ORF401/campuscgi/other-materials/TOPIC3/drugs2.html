@@ -1,0 +1,90 @@
+<HTML>
+<HEAD>
+<TITLE>ORF401 - Electronic Commerce - Server Side Processing Example Part II</TITLE>
+
+<SCRIPT>
+var price = new Array();
+
+
+price["Propecia"] = 19.99;
+price["Minoxidil"] = 12.47;
+
+
+function subtotal(product)
+{
+    var grandtotal, i, n, q, total;
+
+    q = document.orderform["q"+product].value;
+    total = price[product] * q;
+    document.orderform["t"+product].value = total;
+
+
+    grandtotal = 0;
+    document.orderform["total"].value = 0;
+
+    for (n in price) {
+
+         grandtotal += (1*document.orderform["t"+n].value);
+    }
+
+    document.orderform["total"].value = grandtotal;
+
+}
+</SCRIPT>
+
+</HEAD>
+
+<BODY>
+
+<FORM NAME="orderform">
+<TABLE CELLSPACING="10">
+
+<TR>
+<TD>&nbsp;</TD><TD>Quantity</TD><TD>&nbsp;</TD><TD>Total</TD>
+</TR>
+
+<TR>
+<TD>
+Propecia
+</TD>
+<TD>
+<INPUT TYPE="text" NAME="qPropecia" SIZE="5" onChange="subtotal('Propecia');">
+</TD>
+<TD>
+@ <SCRIPT>document.write(price["Propecia"]);</SCRIPT>
+</TD>
+<TD BGCOLOR="GRAY">
+<INPUT TYPE="text" NAME="tPropecia" SIZE="5">
+</TD>
+</TR>
+
+<TR>
+<TD>
+Minoxidil
+</TD>
+<TD>
+<INPUT TYPE="text" NAME="qMinoxidil" SIZE="5" onChange="subtotal('Minoxidil');">
+</TD>
+<TD>
+@ <SCRIPT>document.write(price["Minoxidil"]);</SCRIPT>
+</TD>
+<TD BGCOLOR="GRAY">
+<INPUT TYPE="text" NAME="tMinoxidil" SIZE="5">
+</TD>
+</TR>
+
+
+<TR>
+<TD>&nbsp</TD><TD>&nbsp</TD><TD>&nbsp</TD>
+<TD BGCOLOR="ORANGE">
+<INPUT TYPE="text" NAME="total" SIZE="5">
+</TD>
+</TR>
+
+</TABLE>
+</FORM>
+
+
+</BODY>
+</HTML>
+

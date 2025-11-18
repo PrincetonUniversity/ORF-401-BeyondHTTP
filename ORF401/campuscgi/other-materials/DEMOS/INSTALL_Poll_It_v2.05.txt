@@ -1,0 +1,301 @@
+#!/usr/local/bin/perl
+####################################################################
+# Script:       | Poll It Install File                             #
+# Version:      | 2.05                                             #
+# By:           | Jason Berry (i2 Services, Inc. / CGI World)      #
+# Contact:      | jason@cgi-world.com                              #
+# WWWeb:        | http://www.cgi-world.com                         #
+# Copyright:    | Jason Berry (CGI World of i2 Services, Inc.)     #
+# Released      | August 09, 1998                                  #
+####################################################################
+# By using this software, you have agreed to the license           #
+# agreement packaged with this program.                            #
+#                                                                  #
+####################################################################
+# Files Included:
+ # 
+
+  Version 2.05 Update:  Security Fix for Incoming Values
+              
+
+  ####################################
+  # Notes: 
+
+           All Files starting with an underscore are avaiable
+           for customization to match your sites look.
+
+           Be sure before editing templates to make a backup copy
+           of all files. Backing up the entire .zip you received
+           would be ideal.
+
+           Remember when uploading data files & .cgi files, upload
+           in ASCII mode. Uploading a .cgi or .pl file in BINARY will
+           cause it not to execute correctly.
+
+           Make sure all .cgi or .pl files have the correct path
+           to Perl 5.002+ on your server. Check the FAQ below to find
+           out where Perl 5 is on your server.
+
+           Do not rename any files except for the two main
+           program files.  Poll_It_SSI_v2.0.cgi & Poll_It_v2.0.cgi
+           All other files need to keep the names they were packaged as.
+           (Excluding image.gif)
+
+
+  # Misc Files. 
+  ##################################################
+
+  * INSTALL_Poll_It_v2.05 (No Uploading Needed)
+   
+     - Documentation and installation information for 
+       the Poll It Program.
+
+  * LICENSE_Poll_It (No Uploading Needed)
+
+     - Poll It Program User License Agreement.
+
+
+  # Poll It Display Templates & Main CGI's: 
+  ###################################################
+
+  *  Poll_It_v2.05.cgi (Permission: 755)
+
+     - This is the main main CGI which displays your Poll
+       and Previous Poll, as well as administration area
+       at Poll-It_v2.0.cgi?load=login
+
+   * Poll_It_SSI_v2.05.cgi (Permission: 755)
+
+     - This is the Poll It CGI Script used to import 
+       your polls into existing HTML Pages.
+
+
+  * _ssi_poll.html (Permission: 644)
+
+     - HTML Used for using Poll It through SSI to import
+       into existing web pages. (SSI = Server Side Includes)
+       Comes from Poll_It_SSI_v2.0
+
+
+  * _poll.html (Permission: 644)
+
+     - HTML Used for displaying your poll through
+       the Poll_It_v2.0 CGI Script.
+
+
+  * _last_poll.html (Permission: 644)
+
+     - HTML Used to Display your last poll results
+       through Poll_It_v2.0.cgi?load=lastpoll
+
+   
+ 
+  # Admin Section Templates:
+  ###################################################
+
+
+  * _admin_login.html (Permission 644)
+ 
+     - Template used to login to the administration area.
+
+  * _admin_menu.html (Permission 644)
+ 
+     - Template used for the main menu of the administration area.
+
+  * _admin_create_poll.html (Permission 644)
+ 
+     - Template used to create a new poll.
+
+
+
+  # Poll It Data Files (Modified by the CGI Script):
+  ###################################################
+
+  * poll_info.txt (Permission 666)
+ 
+     - Holds current poll information settings
+
+
+  * poll_options.txt (Permission 666)
+ 
+     - Holds current poll options to vote on
+
+
+  * last_poll_info.txt (Permission 666)
+ 
+     - Holds previous poll information settings
+
+
+  * last_poll_options.txt (Permission 666)
+ 
+     - Holds previous poll options that were voted on.
+
+
+  * ips.txt (Permission: 666)
+
+     - Holds the IP #'s that voted to keep track of
+       who has voted.
+
+
+   #
+  #
+#
+# Installation Procedures:
+ #
+   #######################
+
+
+1) Unzip the Poll_It.zip file to a directory on your computer. Run through
+   the two CGI scripts editing the variables in the top portion of the script
+   for customization.
+
+
+2) Create a directory on your server inside of the directory you're going
+   to run the Poll It CGI Script will run named  'pollit_files' Set this
+   directory to mode 777 (writable)
+
+   Inside this directory upload all of the files that are in the directory
+   'pollit_files'  on your computer when you unzipped the zip file. UPLOAD
+   .txt FILES in ASCII Mode only,  *.html files in BINARY.
+
+   All the files with a .txt extension in this directory needs to have
+   the 666 permission (writable, see above included files)
+   
+   
+   Other files that start w/ a underscore (_) you can leave alone. (Edit
+   these files for customization after you have the Poll It script running)
+
+   
+3) Inside of the directory you are going to run the CGI Script in, upload the 
+   *.cgi & .pl's  in ASCII Mode. Uploading in Binary will corrupt the CGI file 
+   & not it will not run correctly.  Change mode the 3 files (*.cgi & *.pl) 
+   to mode 755 (Executable)
+
+
+4) Now view the Poll It.cgi file in your browser, NOT THE Poll_It_SSI.cgi
+   file, this file is to be used w/ SSI (Server Side Includes), not through
+   the browser by itself (See using Poll_It_SSI.cgi below)
+
+   You should now get an output from the Poll_It.cgi script in your 
+   browser.
+
+   Now Visit:  Poll_It.cgi?load=login   in your browser to start creating you
+               online polls.
+
+
+   If you get a internal server error or other error, review the 
+   Frequently Asked Questions below.
+
+
+
+   #
+  #
+#
+#  Using Poll_It_SSI.cgi within a HTML Page:
+ #
+   #########################################
+
+
+   The filename packaged w/ this script named 'Poll_It_SSI.cgi'
+   is the CGI Script used w/ SSI (Server Side Includes) to import
+   your poll on an existing web page.
+
+   To use SSI within HTML files, most servers require your web page
+   name to have an *.shtml extension rather than *.html.  This allows
+   you to execute a command to include a CGI Output in your html file.
+
+   Some servers (Unix/Apache) you can enter a file named '.htaccess'
+   with the contents:
+
+   AddType text/x-server-parsed-html .html
+
+   Inside of it (make sure that line above has a return after it)
+
+   What this file will do is tell the server to parse HTML files
+   in that directory w/  .html files, allowing you use *.html files
+   with SSI instead of renaming to *.shtml.
+
+
+   Now to input the Poll_It_SSI.cgi script into an HTML page, use this 
+   code (After finding out what you need to use for SSI calls from the
+         above explanation):
+
+   <!--#exec cgi="path/to/Poll_It_SSI.cgi" -->
+
+
+   The above tag will look for the *.cgi file at the location specified
+   & if there will output your current poll running into your web page.
+
+
+   #
+  #
+#
+# Frequently Asked Questions:
+ #
+   ##########################
+
+   Q) The script is producing a Internal Server Error when
+      I view the .cgi script w/ my browser:
+
+      * A) This could be because of several reasons. First, did
+           you upload the .cgi script in ASCII Mode? Set the 
+           CGI Script to mode 755 (chmod 755 filename.cgi) or
+           not have the correct path to Perl5 as the top line?
+
+           If the above checks out, at telnet type:
+
+           perl -c filename.cgi - This will tell you what errors
+           perl has found with the script. If you happen to get
+           a syntax error, it may be because you're not using a
+           recent version of perl 5. If you get a syntax OK 
+           message back, check again the first set of possible
+           problems.
+
+           To find where perl5 is on your server type:
+ 
+           whereis perl5
+
+           To find which version of perl is at /usr/bin/perl type:
+
+           perl -v
+
+
+
+   #
+  #
+#
+# Poll It Support:
+ #
+   ##################
+
+   If you need support for this product please visit:
+  
+   * http://www.cgi-world.com/support.html
+ 
+   or
+
+   e-Mail Us @:
+ 
+   * support_request@cgi-world.com
+
+   or
+
+   Visit Our Contact Us Page @:
+
+   * http://www.cgi-world.com/contact_us.html
+
+
+   #
+  #
+#
+# Copyright & Author Notes:
+ #
+   ########################
+
+   Poll It      -        All Rights Reserved.
+                         Copyright CGI World of I2 Services, Inc.
+                         CGI World (http://www.CGI-World.Com)
+                         CGI World is a Prouct of i2 Services, Inc.
+                         (http://www.i2-Services.Com)
+
+

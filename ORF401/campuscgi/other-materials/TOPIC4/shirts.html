@@ -1,0 +1,39 @@
+<HTML>
+<HEAD>
+<TITLE>An Example of Saving State on the Client Side - Shirts Page</TITLE>
+<SCRIPT SRC="addToBasket.js"></SCRIPT>
+<SCRIPT SRC="extractCookie.js"></SCRIPT>
+<SCRIPT SRC="showBasket.js"></SCRIPT>
+</HEAD>
+
+<BODY LINK="#FF6600" VLINK="#FF6600" ALINK="#FFFFFF" TEXT="#000000" BGCOLOR="#FFFFFF">
+
+<FONT SIZE="+1">We have three amazing shirts to choose from.  Please
+choose one of the following:</FONT>
+<P>
+
+<FORM>
+<CENTER>
+<TABLE>
+<TR>
+<TD><IMG SRC="shirt1.gif"></TD><TD><INPUT TYPE="radio" NAME="shirts" value="shirt1" onClick="addToBasket('Shirt','Shirt 1');"></TD>
+</TR>
+<TR>
+<TD><IMG SRC="shirt2.gif"></TD><TD><INPUT TYPE="radio" NAME="shirts" value="shirt2"  onClick="addToBasket('Shirt','Shirt 2');"></TD>
+</TR>
+<TR>
+<TD><IMG SRC="shirt3.gif"></TD><TD><INPUT TYPE="radio" NAME="shirts" value="shirt3"  onClick="addToBasket('Shirt','Shirt 3');"></TD>
+</TR>
+</TABLE>
+</CENTER>
+</FORM>
+
+<P><BR><P>
+<HR>
+[<A HREF="ties.html">Ties</A>][<A HREF="frames.html">Frames</A>]
+<HR>
+
+<SCRIPT>showBasket();</SCRIPT>
+
+</BODY>
+</HTML>

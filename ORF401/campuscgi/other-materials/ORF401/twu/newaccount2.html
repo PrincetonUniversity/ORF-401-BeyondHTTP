@@ -1,0 +1,84 @@
+<HTML>
+
+<HEAD>
+<TITLE> ORF401 Project 3</TITLE>
+
+<SCRIPT SRC="isBlank.js"></SCRIPT>
+<SCRIPT SRC="checkRequired.js"></SCRIPT>
+<SCRIPT SRC="loadSplashPage.js"></SCRIPT>
+
+</HEAD>
+
+<BODY TEXT="#000000" LINK="#FF6600" VLINK="#FF6600" 
+ALINK="#FF6600" BG-COLOR="#FFFFFF">
+
+<SCRIPT>
+loadSplashPage('http://campuscgi.princeton.edu/~twu/ORF401/splashpage.html');
+</SCRIPT>
+
+<FONT SIZE="+1">
+ORF 401 Project 3: 
+Client-Side Processing with HTTP - Part I 
+(By Tongqiang Wu) (Tony)
+</FONT>
+
+<BR><IMG SRC="logosmall.gif"><BR>
+
+<FORM METHOD="GET" NAME="REGISTRATIONFORM"
+ACTION="http://campuscgi.princeton.edu/~twu/ORF401/NewMemberServer.cgi"
+ onSubmit="return(checkRequired());">
+
+<B>Please input your information before you click the submit button.</B>
+<P>
+
+Your Email: <INPUT TYPE="TEXT" NAME="EMAIL"> 
+<IMG SRC="required_blank.gif" NAME="EMAIL_REQUIRED">
+<BR>
+First Name: <INPUT TYPE="TEXT" NAME="FIRSTNAME"> 
+<IMG SRC="required_blank.gif" NAME="FIRSTNAME_REQUIRED">
+<BR>
+Last Name: <INPUT TYPE="TEXT" NAME="LASTNAME"> 
+<IMG SRC="required_blank.gif" NAME="LASTNAME_REQUIRED">
+<BR>
+
+<P>
+<B>Your typical air-ticket choice:</B>
+<BR>
+<INPUT TYPE="RADIO" NAME="TICKET" VALUE="coach" CHECKED>Coach Class<BR>
+<INPUT TYPE="RADIO" NAME="TICKET" VALUE="business">Business Class<BR>
+<INPUT TYPE="RADIO" NAME="TICKET" VALUE="first"> First Class<BR>
+
+<P>
+<B>Your Movie Preference:</B>
+
+<BR>
+<SELECT NAME="MOVIES" SIZE="6" MULTIPLE>
+<OPTION>Action
+<OPTION>Comedy
+<OPTION>Drama
+<OPTION>Horror
+<OPTION>Mystery
+<OPTION>SciFi
+</SELECT>
+<P>
+<INPUT TYPE="SUBMIT" VALUE="Submit">
+</FORM>
+
+<HR> The following is the current information on cookie.<BR>
+<SCRIPT>
+document.writeln("[document.cookie]=["+document.cookie+"]");
+</SCRIPT>
+
+<HR> You can change the cookie by choosing Yes or No.
+To see the effect, please click Reload button on your browser.
+<FORM NAME="splashFORM">
+<INPUT TYPE="radio" NAME="splashChoice" VALUE="No"
+onClick='document.cookie="splashedGDVD=no;";'> No
+<INPUT TYPE="radio" NAME="splashChoice" VALUE="Yes"
+onClick='document.cookie="splashedGDVD=yes;";'> Yes
+</FORM>
+
+<HR>
+</BODY>
+</HTML>
+

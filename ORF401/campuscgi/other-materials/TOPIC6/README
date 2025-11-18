@@ -1,0 +1,31 @@
+TCP DEMO:
+
+LenseBuyer and LenseServer
+
+must run LenseServer with a store name input as command line argument
+e.g., 
+
+   java LenseServer CVS
+
+
+run client using
+
+   java LenseBuyer "foo"
+
+where foo is the name of a contact lens brand (e.g.,  "New Vues", Focus).
+
+Corresponding data file is contacts.dat
+
+
+
+UDP DEMO:
+
+vmListener and vmReporter
+
+  java vmListener port#
+
+  java vmReporter machinename  port#
+
+
+(where the port# should be the same for both and the machinename reflects
+the client's host)

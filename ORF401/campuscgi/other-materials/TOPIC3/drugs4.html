@@ -1,0 +1,37 @@
+<HTML>
+<HEAD>
+<TITLE>ORF401 - Electronic Commerce - Server Side Processing Example Part IV</TITLE>
+
+<SCRIPT SRC="data.js"></SCRIPT>
+<SCRIPT SRC="subtotal.js"></SCRIPT>
+<SCRIPT SRC="writeProducts.js"></SCRIPT>
+</HEAD>
+
+
+
+<BODY>
+
+
+<FORM NAME="orderform">
+<TABLE CELLSPACING="10">
+
+<TR>
+<TD>&nbsp;</TD><TD>Quantity</TD><TD>&nbsp;</TD><TD>Total</TD>
+</TR>
+
+<SCRIPT>writeProducts();</SCRIPT>
+
+<TR>
+<TD>&nbsp</TD><TD>&nbsp</TD><TD>&nbsp</TD>
+<TD BGCOLOR="ORANGE">
+<INPUT TYPE="text" NAME="total" SIZE="5">
+</TD>
+</TR>
+
+</TABLE>
+</FORM>
+
+
+</BODY>
+</HTML>
+

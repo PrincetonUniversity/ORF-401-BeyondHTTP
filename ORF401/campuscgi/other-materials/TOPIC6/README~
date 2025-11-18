@@ -1,0 +1,16 @@
+LenseBuyer and LenseServer Demos:
+
+must run LenseServer with a store name input as command line argument
+e.g., 
+
+   java LenseServer CVS
+
+
+run client using
+
+   java LenseBuyer "foo"
+
+where foo is the name of a contact lens brand (e.g.,  "New Vues", Focus).
+
+Corresponding data file is contacts.dat
+

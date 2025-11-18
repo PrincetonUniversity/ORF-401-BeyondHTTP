@@ -1,0 +1,50 @@
+<HTML>
+
+<HEAD>
+  <TITLE> ORF401 Final: Coupons</TITLE>
+  <SCRIPT SRC="isBlank.js"></SCRIPT>
+  <SCRIPT SRC="isNull.js"></SCRIPT>
+  <SCRIPT SRC="B_checkRequired.js"></SCRIPT>
+</HEAD>
+
+<BODY TEXT="#000000" LINK="#FF6600" VLINK="#FF6600" 
+ALINK="#FF6600" BG-COLOR="#FFFFFF">
+
+<FONT SIZE="+1">
+ORF 401 Final Project: Coupons 
+</FONT>
+
+<BR><IMG SRC="couponslogosm.gif"><BR>
+
+<FORM METHOD="GET" NAME="B_REGISTRATIONFORM"
+ACTION="http://campuscgi.princeton.edu/~twu/ORF401/BRegister.cgi"
+ onSubmit="return(B_checkRequired());">
+
+<B>Please input your information before you click the submit button.</B>
+<P>
+
+Username: <INPUT TYPE="TEXT" NAME="BUSERNAME"> 
+<IMG SRC="required_blank.gif" NAME="BUSERNAME_REQUIRED">
+<BR>
+Password: <INPUT TYPE="PASSWORD" NAME="BPASSWORD"> 
+<IMG SRC="required_blank.gif" NAME="BPASSWORD_REQUIRED">
+<BR>
+Retype Password: <INPUT TYPE="PASSWORD" NAME="BREPASSWORD"> 
+<IMG SRC="required_blank.gif" NAME="BREPASSWORD_REQUIRED">
+<BR>
+Business Name: <INPUT TYPE="TEXT" NAME="BNAME"> 
+<IMG SRC="required_blank.gif" NAME="BNAME_REQUIRED">
+<BR>
+Address: <INPUT TYPE="TEXT" NAME="BADDRESS" VALUE="Princeton, NJ 08540"> 
+<IMG SRC="required_blank.gif" NAME="BADDRESS_REQUIRED">
+<BR>
+Email: <INPUT TYPE="TEXT" NAME="BEMAIL"> 
+<IMG SRC="required_blank.gif" NAME="BEMAIL_REQUIRED">
+<BR>
+
+<INPUT TYPE="SUBMIT" VALUE="Submit">
+</FORM>
+
+</BODY>
+</HTML>
+

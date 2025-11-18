@@ -1,0 +1,3 @@
+poll_title=Preferred Lunchtime Office Hours
+show_results_after=5
+expired=Tue Feb 15 16:37:41 2000

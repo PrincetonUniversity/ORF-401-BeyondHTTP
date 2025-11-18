@@ -1,0 +1,5 @@
+total=27
+1=just right!=5
+2=too long=7
+3=too loud=8
+4=too short=7

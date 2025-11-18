@@ -1,0 +1,13 @@
+Microsoft Visual Studio Solution File, Format Version 1.00
+Project("{66355F20-A65B-11D0-BFB5-00A0C91EBFA0}") = "GateKeeper", "GateKeeper.vjp", "{4ABE076F-6FD1-47D3-9393-6307C8E5E3FA}"
+EndProject
+Global
+	GlobalSection(LocalDeployment) = postSolution
+		StartupProject = {4ABE076F-6FD1-47D3-9393-6307C8E5E3FA}
+	EndGlobalSection
+	GlobalSection(BuildOrder) = postSolution
+		0 = {4ABE076F-6FD1-47D3-9393-6307C8E5E3FA}
+	EndGlobalSection
+	GlobalSection(DeploymentRoot) = postSolution
+	EndGlobalSection
+EndGlobal

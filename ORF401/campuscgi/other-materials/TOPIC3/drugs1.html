@@ -1,0 +1,91 @@
+<HTML>
+<HEAD>
+<TITLE>ORF401 - Electronic Commerce - Server Side Processing Example Part I</TITLE>
+</HEAD>
+
+<BODY>
+
+<SCRIPT>
+function subtotalPropecia()
+{
+    var other, p, q, total;
+
+
+    p = 19.99;
+    q = document.orderform.qPropecia.value;
+    total = p * q;
+    document.orderform.tPropecia.value = total;
+
+    other = document.orderform.tMinoxidil.value;
+    document.orderform.total.value = 1*total + 1*other;
+}
+
+
+
+function subtotalMinoxidil()
+{
+    var other, p, q, total;
+
+
+    p = 12.47;
+    q = document.orderform.qMinoxidil.value;
+    total = p * q;
+    document.orderform.tMinoxidil.value = total;
+
+    other = document.orderform.tPropecia.value;
+    document.orderform.total.value = 1*total + 1*other;
+}
+
+
+</SCRIPT>
+
+<FORM NAME="orderform">
+<TABLE CELLSPACING="10">
+<TR>
+<TD>&nbsp;</TD><TD>Quantity</TD><TD>&nbsp;</TD><TD>Total</TD>
+</TR>
+
+<TR>
+<TD>
+Propecia
+</TD>
+<TD>
+<INPUT TYPE="text" NAME="qPropecia" SIZE="5" onChange="subtotalPropecia();">
+</TD>
+<TD>
+@ 19.99
+</TD>
+<TD BGCOLOR="GRAY">
+<INPUT TYPE="text" NAME="tPropecia" SIZE="5">
+</TD>
+</TR>
+
+
+<TR>
+<TD>
+Minoxidil
+</TD>
+<TD>
+<INPUT TYPE="text" NAME="qMinoxidil" SIZE="5" onChange="subtotalMinoxidil();">
+</TD>
+<TD>
+@ 12.47
+</TD>
+<TD BGCOLOR="GRAY">
+<INPUT TYPE="text" NAME="tMinoxidil" SIZE="5">
+</TD>
+</TR>
+
+<TR>
+<TD>&nbsp</TD><TD>&nbsp</TD><TD>&nbsp</TD>
+<TD BGCOLOR="ORANGE">
+<INPUT TYPE="text" NAME="total" SIZE="5">
+</TD>
+</TR>
+
+</TABLE>
+</FORM>
+
+
+</BODY>
+</HTML>

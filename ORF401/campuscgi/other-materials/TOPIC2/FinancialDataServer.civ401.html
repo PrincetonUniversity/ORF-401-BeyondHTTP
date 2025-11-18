@@ -1,0 +1,47 @@
+<HTML>
+<HEAD>
+<TITLE>ORF401 - Electronic Commerce - Financial Data Server Example</TITLE>
+</HEAD>
+
+
+<BODY TEXT="#000000" LINK="#FF6600" VLINK="#FF6600" ALINK="#FF6600" BGCOLOR="#FFFFFF">
+
+
+<FONT SIZE="+1">
+Financial Data Server Example
+</FONT>
+
+<P><BR><P><BR>
+
+<FORM METHOD="GET"
+      ACTION="http://campuscgi.princeton.edu/~civ401/TOPIC2/FinancialDataServer.cgi"
+      >
+
+<B>Security:</B>
+<BR>
+<INPUT TYPE="RADIO" NAME="SYMBOL" VALUE="AD97Z.fut" CHECKED>Dec. 97 Australian Dollar<BR>
+<INPUT TYPE="RADIO" NAME="SYMBOL" VALUE="C97Z.fut">Dec. 97 Corn<BR>
+<INPUT TYPE="RADIO" NAME="SYMBOL" VALUE="MSFT.stk">&quot;Microsoft&quot; Stock<BR>
+<INPUT TYPE="RADIO" NAME="SYMBOL" VALUE="ASGN.stk">&quot;On Assignment&quot; Stock<BR>
+
+<P><BR></P>
+<B>Data:</B>
+<BR>
+<SELECT NAME="DATA" SIZE="6" MULTIPLE>
+        <OPTION>Open
+        <OPTION>High
+        <OPTION>Low
+        <OPTION>Close
+        <OPTION>Volume
+        <OPTION>Open Interest
+</SELECT>
+
+<BR>
+<INPUT TYPE="SUBMIT" VALUE="Submit">
+
+
+</FORM>
+
+
+</BODY>
+</HTML>

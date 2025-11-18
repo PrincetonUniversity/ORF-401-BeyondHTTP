@@ -1,0 +1,48 @@
+<HTML>
+
+<HEAD>
+<TITLE> Business Login</TITLE>
+
+<script>
+function LoadRegister()
+{ document.location =
+"http://campuscgi.princeton.edu/~twu/ORF401/BRegister.html";
+}
+</script>
+
+</HEAD>
+
+<BODY TEXT="#000000" LINK="#FF6600" VLINK="#FF6600" 
+ALINK="#FF6600" BG-COLOR="#FFFFFF">
+
+<FONT SIZE="+1">
+ORF 401 Final Project: Coupons: Business Login
+</FONT>
+
+<P>
+
+<img src="couponslogosm.gif">
+<FORM METHOD="GET"
+ACTION="http://campuscgi.princeton.edu/~twu/ORF401/BLogin.cgi">
+
+<B>For non-registered business, please click Register button.</B>
+<P>
+
+Username: <INPUT TYPE="TEXT" NAME="BUSERNAME"> <BR>
+Password: <INPUT TYPE="PASSWORD" NAME="BPASSWORD"> <BR>
+
+<P>
+<INPUT TYPE="SUBMIT" VALUE="Login">
+<INPUT TYPE="BUTTON" VALUE="Register" onClick="LoadRegister()">
+
+</FORM>
+
+<HR>
+<BR> Cookie information:
+<SCRIPT>
+document.writeln("[document.cookie]=["+document.cookie+"]");
+</SCRIPT>
+
+</BODY>
+</HTML>
+

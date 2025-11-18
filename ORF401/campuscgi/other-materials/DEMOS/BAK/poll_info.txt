@@ -1,0 +1,2 @@
+poll_title=Assignment 1 Evaluation
+show_results_after=5

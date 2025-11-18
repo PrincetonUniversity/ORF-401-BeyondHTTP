@@ -1,0 +1,4 @@
+total=30
+1=Friday, noon to 1:30 pm=15
+2=Thursday, noon to 1:30 pm=11
+3=Tuesday, noon to 1:30 pm=4

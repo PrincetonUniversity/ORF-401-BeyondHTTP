@@ -1,0 +1,86 @@
+<HTML>
+<HEAD>
+<TITLE>ORF401 - Electronic Commerce - Server Side Processing Example Part III</TITLE>
+
+<SCRIPT>
+var price = new Array();
+
+
+price["Propecia"] = 19.99;
+price["Minoxidil"] = 12.47;
+
+function subtotal(product)
+{
+    var grandtotal, i, n, q, total;
+
+    q = document.orderform["q"+product].value;
+    total = price[product] * q;
+    document.orderform["t"+product].value = total;
+
+
+    grandtotal = 0;
+    document.orderform["total"].value = 0;
+
+    for (n in price) {
+
+         grandtotal += (1*document.orderform["t"+n].value);
+    }
+
+    document.orderform["total"].value = grandtotal;
+}
+
+</SCRIPT>
+
+</HEAD>
+
+
+
+<BODY>
+
+
+<FORM NAME="orderform">
+<TABLE CELLSPACING="10">
+
+<TR>
+<TD>&nbsp;</TD><TD>Quantity</TD><TD>&nbsp;</TD><TD>Total</TD>
+</TR>
+
+
+<SCRIPT>
+var n;
+
+for (n in price) {
+
+    document.writeln(
+       "<TR>"+
+       "<TD>"+
+       n+
+       "</TD>"+
+       "<TD>"+
+       "<INPUT TYPE=\"text\" NAME=\"q"+n+"\" SIZE=\"5\" onChange=\"subtotal('"+n+"');\">"+
+      "</TD>"+
+      "<TD>"+
+      "@ "+price[n]+
+      "</TD>"+
+      "<TD BGCOLOR=\"GRAY\">"+
+      "<INPUT TYPE=\"text\" NAME=\"t"+n+"\" SIZE=\"5\">"+
+      "</TD>"+
+      "</TR>"
+      );
+}
+</SCRIPT>
+
+<TR>
+<TD>&nbsp</TD><TD>&nbsp</TD><TD>&nbsp</TD>
+<TD BGCOLOR="ORANGE">
+<INPUT TYPE="text" NAME="total" SIZE="5">
+</TD>
+</TR>
+
+</TABLE>
+</FORM>
+
+
+</BODY>
+</HTML>
+
