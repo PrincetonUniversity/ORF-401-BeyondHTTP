@@ -1,0 +1,32 @@
+{
+  "name": "orf401-gate-lab-web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "ORF 401 Lab 5 (Beyond HTTP) as an offline-capable PWA",
+  "type": "module",
+  "license": "SEE LICENSE IN ../LICENSE.md",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "serve": "node scripts/serve.js",
+    "icons": "node scripts/make-icons.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc -p tsconfig.json",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "test": "npm run lint && npm run format:check && npm run typecheck && npm run test:unit && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.1",
+    "@types/node": "26.6.6",
+    "eslint": "10.15.0",
+    "globals": "17.14.0",
+    "prettier": "3.10.1",
+    "typescript": "7.0.2",
+    "vitest": "5.1.1"
+  }
+}

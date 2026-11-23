@@ -1,0 +1,317 @@
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --text: #1b1f24;
+  --muted: #5b6470;
+  --border: #d6dae0;
+  --accent: #1f3a5f;
+  --live: #1f7a4d;
+  --bad: #b3261e;
+  --warn: #8a5a00;
+  --screen-bg: #0f1720;
+  --screen-text: #9fe0b5;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12151a;
+    --surface: #1b2028;
+    --text: #e6e9ee;
+    --muted: #9aa4b2;
+    --border: #2e3540;
+    --accent: #8fb3e8;
+    --live: #5cc98d;
+    --bad: #ff8a80;
+    --warn: #f0c060;
+    --screen-bg: #070b10;
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font:
+    15px/1.5 system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--accent);
+}
+h2 {
+  font-size: 1.05rem;
+  margin: 24px 0 8px;
+}
+h2 small {
+  font-weight: normal;
+  color: var(--muted);
+}
+h3 {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+}
+.sub,
+.meta,
+.hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.who {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  align-items: center;
+  font-size: 0.875rem;
+}
+.who strong {
+  font-family: var(--mono);
+}
+
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px 32px;
+}
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+  padding: 16px;
+}
+a {
+  color: var(--accent);
+}
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
+
+.fatal {
+  margin: 16px;
+  padding: 12px;
+  border: 1px solid var(--bad);
+  color: var(--bad);
+  background: var(--surface);
+}
+
+.intro {
+  margin-top: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+}
+.intro summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+}
+
+.board,
+.server,
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 0;
+}
+.panel {
+  margin-top: 16px;
+}
+.panel h2 {
+  margin-top: 0;
+}
+
+.board {
+  border-top: 4px solid var(--border);
+}
+.board.live {
+  border-top-color: var(--live);
+}
+.board header img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  background: #fff;
+  border-radius: 4px;
+}
+.board .meta {
+  margin-top: 6px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0;
+}
+.status {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.screen {
+  margin: 0;
+  height: 260px;
+  overflow: auto;
+  background: var(--screen-bg);
+  color: var(--screen-text);
+  font: 13px/1.45 var(--mono);
+  padding: 8px;
+  border-radius: 4px;
+  white-space: pre;
+}
+
+.server ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+.server li.mine {
+  color: var(--live);
+  font-weight: 600;
+}
+.server li.empty {
+  color: var(--muted);
+  list-style: none;
+  margin-left: -18px;
+}
+
+button,
+select,
+input:not([type]) {
+  font: inherit;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+}
+button {
+  cursor: pointer;
+  background: var(--accent);
+  color: var(--surface);
+  border-color: var(--accent);
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.controls {
+  display: grid;
+  gap: 10px 24px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  align-items: center;
+}
+.controls label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.controls input[type='range'] {
+  flex: 1;
+  min-width: 0;
+}
+.controls output {
+  font-family: var(--mono);
+  min-width: 6ch;
+  text-align: right;
+}
+.check {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+#console-line {
+  flex: 1 1 200px;
+  min-width: 0;
+  font-family: var(--mono);
+}
+#console-server {
+  max-width: 100%;
+}
+.console-out {
+  margin: 0;
+  min-height: 2.9em;
+  font: 13px/1.45 var(--mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.log-wrap {
+  max-height: 360px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.log {
+  width: 100%;
+  border-collapse: collapse;
+  font: 12px/1.4 var(--mono);
+}
+.log th {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.log th,
+.log td {
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+.log td.payload {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 16ch;
+}
+.log tr.lost td,
+.log tr.timeout td,
+.log tr.unreachable td,
+.log tr.refused td {
+  color: var(--bad);
+}
+.log tr.retransmit td {
+  color: var(--warn);
+}
+.hide-tcp tr.tcp,
+.hide-udp tr.udp {
+  display: none;
+}

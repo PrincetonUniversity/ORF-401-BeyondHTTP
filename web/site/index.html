@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gate Information Lab</title>
+    <meta
+      name="description"
+      content="ORF 401 Lab 5 (Beyond HTTP) in the browser: TCP registration and UDP gate-change broadcasts on a simulated network."
+    />
+    <meta name="theme-color" content="#1f3a5f" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="img/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="img/icon-192.png" />
+    <link rel="stylesheet" href="css/app.css" />
+    <script type="module" src="js/app.js"></script>
+  </head>
+  <body>
+    <header class="top">
+      <div>
+        <h1>Gate Information Lab</h1>
+        <p class="sub">ORF 401 · Lab 5 · Beyond HTTP</p>
+      </div>
+      <div class="who">
+        <span>This tab is <strong id="my-ip">…</strong></span>
+        <span>Network: <strong id="mode">starting</strong></span>
+        <button id="install" type="button" hidden>Install app</button>
+      </div>
+    </header>
+
+    <p id="fatal" class="fatal" role="alert" hidden></p>
+
+    <main>
+      <details class="intro">
+        <summary>What is this?</summary>
+        <p>
+          This is the Java Lab 5 rebuilt to run entirely in your browser. Each airline server keeps a table of
+          listeners. A client joins over <strong>TCP port 8189</strong> by sending
+          <code>ADD &lt;ip&gt; &lt;port&gt;</code>; the server answers <code>HELLO</code>. Every few seconds the server
+          sends each listener a <strong>UDP</strong> datagram such as <code>CarmonCar,Newark,SEAT,3,GATE,17</code>.
+        </p>
+        <p>
+          Browsers cannot open real sockets, so the network is simulated. The rules are the same: TCP retransmits lost
+          segments and either succeeds or times out; UDP datagrams are sent once and simply vanish when lost. Open this
+          page in a second tab to add a second machine to the network.
+        </p>
+      </details>
+
+      <section aria-labelledby="clients-h">
+        <h2 id="clients-h">Client: GateKeeper</h2>
+        <div id="boards" class="grid"></div>
+      </section>
+
+      <section aria-labelledby="servers-h">
+        <h2 id="servers-h">Servers: registered listeners</h2>
+        <div id="servers" class="grid"></div>
+      </section>
+
+      <section aria-labelledby="net-h" class="panel">
+        <h2 id="net-h">Network conditions <small>(shared by every tab on this network)</small></h2>
+        <div class="controls">
+          <label
+            >Packet loss <input id="loss" type="range" min="0" max="100" step="1" value="0" />
+            <output id="loss-out">0%</output></label
+          >
+          <label
+            >Latency <input id="latency" type="range" min="0" step="10" value="40" />
+            <output id="latency-out">40 ms</output></label
+          >
+          <label
+            >Jitter <input id="jitter" type="range" min="0" step="10" value="20" />
+            <output id="jitter-out">±20 ms</output></label
+          >
+          <label
+            >Reporter speed
+            <select id="speed"></select
+          ></label>
+          <label class="check"><input id="paused" type="checkbox" /> Pause reporters</label>
+          <button id="reset" type="button">Reset servers</button>
+        </div>
+      </section>
+
+      <section aria-labelledby="console-h" class="panel">
+        <h2 id="console-h">TCP console</h2>
+        <p class="hint">
+          Send one raw control line, as <code>GateInformationBoard.Register()</code> does. Try a bad port or an unknown
+          command.
+        </p>
+        <form id="console" class="row">
+          <select id="console-server" aria-label="Server"></select>
+          <input id="console-line" aria-label="Control line" autocomplete="off" spellcheck="false" maxlength="200" />
+          <button type="submit">Send</button>
+        </form>
+        <pre id="console-out" class="console-out" data-testid="console-out"></pre>
+      </section>
+
+      <section aria-labelledby="log-h" class="panel">
+        <h2 id="log-h">Packet log</h2>
+        <div class="row">
+          <label class="check"><input id="show-tcp" type="checkbox" checked /> TCP</label>
+          <label class="check"><input id="show-udp" type="checkbox" checked /> UDP</label>
+        </div>
+        <div class="log-wrap">
+          <table class="log">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Proto</th>
+                <th>From → To</th>
+                <th>Payload</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody id="log-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Original Java lab: <code>Lab5/</code> and <code>Lab5_Server/</code> in the
+      <a href="https://github.com/PrincetonUniversity/ORF-401-BeyondHTTP">repository</a>. Works offline once loaded.
+    </footer>
+  </body>
+</html>

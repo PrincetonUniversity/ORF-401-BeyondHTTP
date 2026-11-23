@@ -1,0 +1,85 @@
+name: Web demo
+
+on:
+  push:
+    branches: [master]
+    paths: ['web/**', 'Lab5_Server/des_code.csv', '.github/workflows/web.yml']
+  pull_request:
+    paths: ['web/**', 'Lab5_Server/des_code.csv', '.github/workflows/web.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Lint, types, unit and browser tests (Docker)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build test image
+        run: >
+          docker build
+          --build-context lab5_server=Lab5_Server
+          --tag orf401-gate-lab-test
+          web
+
+      - name: Run test suite
+        run: |
+          mkdir -p web/playwright-report
+          chmod 777 web/playwright-report
+          docker run --rm --ipc=host \
+            -v "$PWD/web/playwright-report:/lab/web/playwright-report" \
+            orf401-gate-lab-test
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report
+          path: web/playwright-report
+          retention-days: 7
+
+  deploy:
+    name: Publish to GitHub Pages
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Stage site and stamp service worker cache version
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          cp -R web/site _site
+          grep -q '__BUILD__' _site/sw.js
+          sed -i "s/__BUILD__/${GITHUB_SHA::12}/" _site/sw.js
+          if grep -q '__BUILD__' _site/sw.js; then echo "sw.js was not stamped" >&2; exit 1; fi
+          touch _site/.nojekyll
+
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
