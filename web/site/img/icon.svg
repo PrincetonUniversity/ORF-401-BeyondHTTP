@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#1f3a5f"/>
+  <rect x="96" y="128" width="320" height="256" rx="20" fill="#0f1720"/>
+  <g fill="#9fe0b5" font-family="Menlo, Consolas, monospace" font-weight="700">
+    <text x="128" y="214" font-size="56">GATE</text>
+    <text x="128" y="300" font-size="72">17</text>
+  </g>
+  <g fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round">
+    <path d="M340 236a40 40 0 0 1 0 56"/>
+    <path d="M368 208a80 80 0 0 1 0 112"/>
+  </g>
+</svg>

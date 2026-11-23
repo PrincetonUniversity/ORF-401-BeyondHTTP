@@ -2,9 +2,16 @@
 
 A teaching lab for the eCommerce course module **Beyond HTTP**. The code base demonstrates how event-driven integrations can pair reliable TCP control channels with lightweight UDP broadcasts to keep remote clients up to date.
 
+## Run it in the browser
+
+A JavaScript port of the lab runs entirely in the browser and installs as an offline PWA:
+<https://princetonuniversity.github.io/ORF-401-BeyondHTTP/>. It simulates the TCP registration and UDP broadcasts,
+with adjustable packet loss and a packet log. See [`web/README.md`](web/README.md).
+
 ## Project Layout
 - `Lab5/` - Swing/AWT client that displays live gate assignments for two partner airlines. It registers itself over TCP and listens for UDP notifications.
 - `Lab5_Server/` - Server-side utilities that track subscribed listeners, play back CSV-based destination data, and broadcast periodic updates.
+- `web/` - Browser (PWA) version of the lab, deployed to GitHub Pages.
 
 ## Architecture Highlights
 - **Registration handshake (TCP 8189):** Clients announce their IP and UDP port via `GateInformationBoard.Register()`. The server records each listener in a simple in-memory table and acknowledges with `HELLO`.
