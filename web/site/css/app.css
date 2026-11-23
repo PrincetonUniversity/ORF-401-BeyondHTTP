@@ -10,6 +10,8 @@
   --warn: #8a5a00;
   --screen-bg: #0f1720;
   --screen-text: #9fe0b5;
+  --tcp: #2563c9;
+  --udp: #1f7a4d;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   color-scheme: light;
 }
@@ -26,6 +28,8 @@
     --bad: #ff8a80;
     --warn: #f0c060;
     --screen-bg: #070b10;
+    --tcp: #7aa7ff;
+    --udp: #5cc98d;
     color-scheme: dark;
   }
 }
@@ -314,4 +318,152 @@ button:disabled {
 .hide-tcp tr.tcp,
 .hide-udp tr.udp {
   display: none;
+}
+
+.diagram-panel summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.diagram-panel summary::-webkit-details-marker {
+  display: none;
+}
+.diagram-panel summary::before {
+  content: '▶';
+  font-size: 0.75rem;
+  color: var(--muted);
+  transition: transform 0.15s;
+}
+.diagram-panel[open] summary::before {
+  transform: rotate(90deg);
+}
+.diagram-panel summary h2 {
+  margin: 0;
+}
+.diagram-panel[open] summary {
+  margin-bottom: 8px;
+}
+.diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  margin-top: 8px;
+}
+.diagram .edge {
+  stroke: var(--border);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 6;
+}
+.diagram .edge.live {
+  stroke: var(--muted);
+  stroke-dasharray: none;
+}
+.diagram .edge.flash {
+  stroke-width: 4;
+  stroke-dasharray: none;
+}
+.diagram .edge.flash.ok {
+  stroke: var(--udp);
+}
+.diagram .edge.flash.lost,
+.diagram .edge.flash.bad {
+  stroke: var(--bad);
+}
+.diagram .edge.flash.warn {
+  stroke: var(--warn);
+}
+.diagram .node rect {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+.diagram .node.server rect {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+.diagram .node.self rect {
+  stroke: var(--live);
+  stroke-width: 2.5;
+}
+.diagram .node text {
+  text-anchor: middle;
+  fill: var(--text);
+  font:
+    600 14px system-ui,
+    sans-serif;
+}
+.diagram.compact .node text {
+  font-size: 16px;
+}
+.diagram.compact .node text.sub {
+  font-size: 13px;
+}
+.diagram .node text.sub {
+  fill: var(--muted);
+  font: 12px var(--mono);
+}
+.diagram .packet {
+  stroke: var(--surface);
+  stroke-width: 1;
+}
+.diagram .packet.tcp.ok,
+.swatch.tcp.ok {
+  fill: var(--tcp);
+  background: var(--tcp);
+}
+.diagram .packet.udp.ok,
+.swatch.udp.ok {
+  fill: var(--udp);
+  background: var(--udp);
+}
+.diagram .packet.lost,
+.diagram .packet.bad,
+.swatch.lost {
+  fill: var(--bad);
+  background: var(--bad);
+}
+.diagram .packet.warn,
+.swatch.warn {
+  fill: var(--warn);
+  background: var(--warn);
+}
+.diagram .packet.muted,
+.swatch.muted {
+  fill: var(--muted);
+  background: var(--muted);
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.swatch {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+}
+.swatch.udp {
+  border-radius: 50%;
+}
+.swatch.tcp {
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .diagram-panel summary::before {
+    transition: none;
+  }
 }

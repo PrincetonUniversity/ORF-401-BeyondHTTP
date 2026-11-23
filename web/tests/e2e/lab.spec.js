@@ -201,3 +201,65 @@ test('the manifest is served and points at real icons', async ({ page, request }
     expect(iconRes.ok(), icon.src).toBe(true);
   }
 });
+
+test('the live diagram is collapsed by default and animates packets when opened', async ({ page }) => {
+  const errors = watchErrors(page);
+  const ip = await openLab(page);
+  const panel = page.locator('#diagram-panel');
+  const diagram = page.locator('#diagram');
+  await expect(panel).not.toHaveAttribute('open', '');
+  await expect(diagram).toBeHidden();
+
+  await page.locator('#speed').selectOption('20');
+  await page.waitForTimeout(1000);
+  // Closed: traffic flows but the diagram does no work.
+  expect(await page.locator('#diagram .packet').count()).toBe(0);
+
+  await panel.locator('summary').click();
+  await expect(diagram).toBeVisible();
+  await expect(diagram.locator('[data-node="10.0.1.1"]')).toContainText('CarmonCar');
+  await expect(diagram.locator('[data-node="10.0.1.2"]')).toContainText('Vanderides');
+  await expect(diagram.locator(`[data-node="${ip}"]`)).toContainText('This tab');
+  await expect(diagram.locator(`[data-edge="10.0.1.1>${ip}"]`)).toHaveClass(/live/);
+  await expect(diagram.locator('.packet.udp.ok').first()).toBeAttached({ timeout: 5_000 });
+
+  // Lost datagrams are drawn in the lost style.
+  await page.locator('#loss').fill('100');
+  await expect(diagram.locator('.packet.udp.lost').first()).toBeAttached({ timeout: 5_000 });
+
+  // Unregistering removes the solid link.
+  await page.locator('#loss').fill('0');
+  await board(page, 'CarmonCar').getByTestId('register').click();
+  await expect(board(page, 'CarmonCar').getByTestId('status')).toHaveText(`← BYE ${ip} 51000`);
+  await expect(diagram.locator(`[data-edge="10.0.1.1>${ip}"]`)).not.toHaveClass(/live/);
+
+  // Closing the panel clears in-flight packets.
+  await panel.locator('summary').click();
+  await expect(page.locator('#diagram .packet')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test('the live diagram shows other tabs as clients', async ({ context }) => {
+  const one = await context.newPage();
+  const two = await context.newPage();
+  await openLab(one);
+  const ipTwo = await openLab(two);
+  await one.locator('#diagram-panel summary').click();
+  const node = one.locator(`#diagram [data-node="${ipTwo}"]`);
+  await expect(node).toContainText('Client');
+  await expect(one.locator(`#diagram [data-edge="10.0.1.2>${ipTwo}"]`)).toHaveClass(/live/);
+});
+
+test('the live diagram switches to the compact drawing on a phone-width screen', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openLab(page);
+  await page.locator('#diagram-panel summary').click();
+  const diagram = page.locator('#diagram');
+  await expect(diagram).toHaveClass(/compact/);
+  await expect(diagram).toHaveAttribute('viewBox', '0 0 460 360');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+
+  await page.setViewportSize({ width: 1100, height: 844 });
+  await expect(diagram).not.toHaveClass(/compact/);
+  await expect(diagram).toHaveAttribute('viewBox', '0 0 800 320');
+});

@@ -3,6 +3,7 @@
 // console and a packet log.
 
 import { LabClient } from './client.js';
+import { LiveDiagram } from './diagram.js';
 import { BOARD_HEADER, boardRow, formatControl, parseGateMessage } from './protocol.js';
 import { LIMITS } from './network.js';
 
@@ -353,9 +354,23 @@ async function main() {
     servers.append(card);
   }
 
-  client.onState = renderState;
-  client.onLog = appendLog;
+  const diagram = new LiveDiagram(
+    /** @type {HTMLDetailsElement} */ ($('#diagram-panel')),
+    /** @type {SVGSVGElement} */ ($('#diagram')),
+    welcome.airlines,
+    welcome.ip,
+  );
+
+  client.onState = (state) => {
+    renderState(state);
+    diagram.setState(state.airlinesState);
+  };
+  client.onLog = (entry) => {
+    appendLog(entry);
+    diagram.packet(entry);
+  };
   renderState(welcome);
+  diagram.setState(welcome.airlinesState);
   for (const entry of welcome.log) appendLog(entry);
 
   window.addEventListener('pagehide', () => {

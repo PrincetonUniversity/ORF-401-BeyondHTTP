@@ -28,6 +28,7 @@ Android) the servers run inside the page and the network covers that tab only. A
   - `js/network.js`: loss, latency, jitter and the TCP retransmission model.
   - `js/server-host.js`: the airline servers and the simulated wire.
   - `js/client.js`, `js/app.js`: tab-side socket API and UI.
+  - `js/diagram.js`: collapsible animated SVG diagram of live packets (idle while collapsed).
   - `sw.js`: precaches every file for offline use.
 - `tests/unit/`: Vitest tests for the protocol, network model, servers and PWA wiring.
 - `tests/e2e/`: Playwright tests in Chromium (multi-tab, loss, console, fallback, offline).
