@@ -6,7 +6,7 @@
 //   (see Lab5_Server/GateListenerRegistrar.java)
 //
 // Data channel (UDP 51000+), one datagram per gate change:
-//   "<AIRLINE>,<DESTINATION>,SEAT,<n>,GATE,<n>"
+//   "<COMPANY>,<DESTINATION>,SEAT,<n>,GATE,<n>"
 //   (see Lab5_Server/GateReporter.java and Lab5/GateListener.java)
 
 export const CONTROL_PORT = 8189;
@@ -64,12 +64,12 @@ export function formatControl(command, host, port) {
 }
 
 /**
- * @typedef {{ airline: string, destination: string, seats: number, gate: number }} GateChange
+ * @typedef {{ company: string, destination: string, seats: number, gate: number }} GateChange
  */
 
 /** @param {GateChange} change */
 export function formatGateMessage(change) {
-  return `${change.airline},${change.destination},SEAT,${change.seats},GATE,${change.gate}`;
+  return `${change.company},${change.destination},SEAT,${change.seats},GATE,${change.gate}`;
 }
 
 /**
@@ -82,11 +82,11 @@ export function formatGateMessage(change) {
 export function parseGateMessage(message) {
   const parts = String(message).split(',');
   if (parts.length !== 6) return null;
-  const [airline, destination, seatLabel, seatText, gateLabel, gateText] = parts;
+  const [company, destination, seatLabel, seatText, gateLabel, gateText] = parts;
   if (seatLabel !== 'SEAT' || gateLabel !== 'GATE') return null;
-  if (!airline || !destination) return null;
+  if (!company || !destination) return null;
   if (!/^\d+$/.test(seatText) || !/^\d+$/.test(gateText)) return null;
-  return { airline, destination, seats: Number(seatText), gate: Number(gateText) };
+  return { company, destination, seats: Number(seatText), gate: Number(gateText) };
 }
 
 /**

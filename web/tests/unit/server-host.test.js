@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { AIRLINES, ServerHost, validateClientMessage } from '../../site/js/server-host.js';
+import { COMPANIES, ServerHost, validateClientMessage } from '../../site/js/server-host.js';
 import { CONTROL_PORT, parseGateMessage } from '../../site/js/protocol.js';
 import { TCP_INITIAL_RTO_MS, TCP_MAX_ATTEMPTS } from '../../site/js/network.js';
 import { fakeEnv, recordingPort, seeded } from './helpers.js';
 
-const CARMON = AIRLINES[0];
-const VANDER = AIRLINES[1];
+const CARMON = COMPANIES[0];
+const VANDER = COMPANIES[1];
 const DESTS = ['Newark', 'Jersey City', 'Paterson'];
 
 /** @type {ServerHost} */
@@ -49,13 +49,13 @@ describe('connect', () => {
     expect(welcome).toMatchObject({
       ip: '10.0.2.10',
       controlPort: 8189,
-      airlines: [
+      companies: [
         { name: 'CarmonCar', ip: '10.0.1.1' },
-        { name: 'Vanderides', ip: '10.0.1.2' },
+        { name: 'VandeRides', ip: '10.0.1.2' },
       ],
       conditions: { loss: 0, paused: false, speed: 1 },
     });
-    expect(welcome.airlinesState.map((/** @type {any} */ s) => s.listeners)).toEqual([[], []]);
+    expect(welcome.companiesState.map((/** @type {any} */ s) => s.listeners)).toEqual([[], []]);
   });
 
   it('frees the address when a tab says bye', () => {
@@ -72,10 +72,10 @@ describe('registrar over TCP 8189', () => {
     const ip = host.connect(a);
     const reply = await tcp(a, 1, `ADD ${ip} 51000`);
     expect(reply).toEqual({ type: 'tcp-reply', id: 1, ok: true, line: `HELLO ${ip} 51000` });
-    expect(host.airlines[0].registry.all().map((r) => `${r.host}:${r.port}`)).toEqual([`${ip}:51000`]);
-    expect(host.airlines[1].registry.size).toBe(0);
+    expect(host.companies[0].registry.all().map((r) => `${r.host}:${r.port}`)).toEqual([`${ip}:51000`]);
+    expect(host.companies[1].registry.size).toBe(0);
     const lastState = a.of('state').at(-1);
-    expect(lastState.airlinesState[0].listeners).toEqual([`${ip}:51000`]);
+    expect(lastState.companiesState[0].listeners).toEqual([`${ip}:51000`]);
   });
 
   it('reports a duplicate ADD the way the Java registrar does', async () => {
@@ -91,7 +91,7 @@ describe('registrar over TCP 8189', () => {
     await tcp(a, 1, `ADD ${ip} 51000`);
     expect((await tcp(a, 2, `DROP ${ip} 51000`)).line).toBe(`BYE ${ip} 51000`);
     expect((await tcp(a, 3, `DROP ${ip} 51000`)).line).toBe(`UNABLE TO DROP ${ip} 51000`);
-    expect(host.airlines[0].registry.size).toBe(0);
+    expect(host.companies[0].registry.size).toBe(0);
   });
 
   it('passes parse errors back as reply lines', async () => {
@@ -112,7 +112,7 @@ describe('registrar over TCP 8189', () => {
       ok: false,
       error: 'No route to host',
     });
-    expect(host.airlines[0].registry.size).toBe(0);
+    expect(host.companies[0].registry.size).toBe(0);
   });
 
   it('times out after all retransmissions at 100% loss, and logs each one', async () => {
@@ -123,7 +123,7 @@ describe('registrar over TCP 8189', () => {
     const statuses = a.of('log').map((m) => m.entry.status);
     expect(statuses.filter((s) => s === 'retransmit')).toHaveLength(TCP_MAX_ATTEMPTS - 1);
     expect(statuses.filter((s) => s === 'timeout')).toHaveLength(1);
-    expect(host.airlines[0].registry.size).toBe(0);
+    expect(host.companies[0].registry.size).toBe(0);
   });
 });
 
@@ -142,15 +142,15 @@ describe('reporter over UDP', () => {
       expect(d.src).toBe(`${CARMON.ip}:${CARMON.sourcePort}`);
       const change = parseGateMessage(d.payload);
       expect(change).not.toBeNull();
-      expect(change?.airline).toBe('CarmonCar');
+      expect(change?.company).toBe('CarmonCar');
       expect(DESTS).toContain(change?.destination);
       expect(change?.seats).toBeGreaterThanOrEqual(1);
       expect(change?.seats).toBeLessThanOrEqual(5);
       expect(change?.gate).toBeGreaterThanOrEqual(1);
       expect(change?.gate).toBeLessThanOrEqual(30);
     }
-    expect(host.airlines[0].sent).toBeGreaterThanOrEqual(datagrams.length);
-    expect(host.airlines[1].sent).toBe(0);
+    expect(host.companies[0].sent).toBeGreaterThanOrEqual(datagrams.length);
+    expect(host.companies[1].sent).toBe(0);
   });
 
   it('fans out to several tabs', async () => {
@@ -187,13 +187,13 @@ describe('reporter over UDP', () => {
     await vi.advanceTimersByTimeAsync(1000);
     a.send({ type: 'set-conditions', conditions: { loss: 1 } });
     a.received.length = 0;
-    const sentBefore = host.airlines[0].sent;
-    const lostBefore = host.airlines[0].lost;
+    const sentBefore = host.companies[0].sent;
+    const lostBefore = host.companies[0].lost;
     await vi.advanceTimersByTimeAsync(30_000);
-    const sent = host.airlines[0].sent - sentBefore;
+    const sent = host.companies[0].sent - sentBefore;
     expect(a.of('udp')).toHaveLength(0);
     expect(sent).toBeGreaterThanOrEqual(4);
-    expect(host.airlines[0].lost - lostBefore).toBe(sent);
+    expect(host.companies[0].lost - lostBefore).toBe(sent);
   });
 
   it('stops while paused and runs faster at higher speed', async () => {
@@ -202,14 +202,14 @@ describe('reporter over UDP', () => {
     a.send({ type: 'bind', port: 51000 });
     await tcp(a, 1, `ADD ${ip} 51000`);
     a.send({ type: 'set-conditions', conditions: { paused: true } });
-    const before = host.airlines[0].sent;
+    const before = host.companies[0].sent;
     await vi.advanceTimersByTimeAsync(30_000);
-    expect(host.airlines[0].sent).toBe(before);
+    expect(host.companies[0].sent).toBe(before);
 
     a.send({ type: 'set-conditions', conditions: { paused: false, speed: 20 } });
     await vi.advanceTimersByTimeAsync(7_500);
     // At 20x each interval is at most 375 ms, so 7.5 s holds at least 20 reports.
-    expect(host.airlines[0].sent - before).toBeGreaterThanOrEqual(20);
+    expect(host.companies[0].sent - before).toBeGreaterThanOrEqual(20);
   });
 
   it('reset clears listeners, counters and conditions for every tab', async () => {
@@ -220,9 +220,9 @@ describe('reporter over UDP', () => {
     await tcp(a, 1, `ADD ${ip} 51000`);
     a.send({ type: 'set-conditions', conditions: { loss: 0.5 } });
     b.send({ type: 'reset' });
-    expect(host.airlines[0].registry.size).toBe(0);
+    expect(host.companies[0].registry.size).toBe(0);
     expect(host.conditions.loss).toBe(0);
-    expect(a.of('state').at(-1).airlinesState[0].listeners).toEqual([]);
+    expect(a.of('state').at(-1).companiesState[0].listeners).toEqual([]);
   });
 });
 

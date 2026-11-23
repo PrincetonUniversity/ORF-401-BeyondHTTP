@@ -23,14 +23,14 @@ async function openLab(page, path = './') {
   return (await page.locator('#my-ip').textContent()) ?? '';
 }
 
-/** @param {Page} page @param {string} airline */
-const board = (page, airline) => page.locator(`.board[data-airline="${airline}"]`);
-/** @param {Page} page @param {string} airline */
-const server = (page, airline) => page.locator(`.server[data-airline="${airline}"]`);
+/** @param {Page} page @param {string} company */
+const board = (page, company) => page.locator(`.board[data-company="${company}"]`);
+/** @param {Page} page @param {string} company */
+const server = (page, company) => page.locator(`.server[data-company="${company}"]`);
 /** @param {import('@playwright/test').Locator} loc */
 const count = async (loc) => Number(await loc.textContent());
 
-test('a tab registers with both airlines over TCP and receives UDP gate changes', async ({ page }) => {
+test('a tab registers with both companies over TCP and receives UDP gate changes', async ({ page }) => {
   const errors = watchErrors(page);
   const ip = await openLab(page);
   expect(ip).toMatch(/^10\.0\.2\.\d+$/);
@@ -39,19 +39,19 @@ test('a tab registers with both airlines over TCP and receives UDP gate changes'
   /** @type {[string, number][]} */
   const boards = [
     ['CarmonCar', 51000],
-    ['Vanderides', 51001],
+    ['VandeRides', 51001],
   ];
-  for (const [airline, port] of boards) {
-    await expect(board(page, airline).getByTestId('status')).toHaveText(`← HELLO ${ip} ${port}`);
-    await expect(server(page, airline).getByTestId('listeners')).toContainText(`${ip}:${port}`);
+  for (const [company, port] of boards) {
+    await expect(board(page, company).getByTestId('status')).toHaveText(`← HELLO ${ip} ${port}`);
+    await expect(server(page, company).getByTestId('listeners')).toContainText(`${ip}:${port}`);
   }
 
   await page.locator('#speed').selectOption('20');
-  for (const airline of ['CarmonCar', 'Vanderides']) {
+  for (const company of ['CarmonCar', 'VandeRides']) {
     await expect
-      .poll(() => count(board(page, airline).getByTestId('received')), { timeout: 15_000 })
+      .poll(() => count(board(page, company).getByTestId('received')), { timeout: 15_000 })
       .toBeGreaterThan(2);
-    const screen = await board(page, airline).getByTestId('screen').textContent();
+    const screen = await board(page, company).getByTestId('screen').textContent();
     const rows = (screen ?? '').split('\n');
     expect(rows[0]).toMatch(/^Destination\s+Av\. Seats\s+Gate$/);
     expect(rows[1]).toMatch(/^\S.*\s+[1-5]\s+([1-9]|[12]\d|30)$/);
@@ -104,9 +104,9 @@ test('UDP datagrams vanish under 100% loss while the server keeps sending', asyn
       /** @param {string} sel */
       const n = (sel) => Number(document.querySelector(sel)?.textContent);
       return {
-        received: n('.board[data-airline="CarmonCar"] [data-testid="received"]'),
-        sent: n('.server[data-airline="CarmonCar"] [data-testid="sent"]'),
-        lost: n('.server[data-airline="CarmonCar"] [data-testid="lost"]'),
+        received: n('.board[data-company="CarmonCar"] [data-testid="received"]'),
+        sent: n('.server[data-company="CarmonCar"] [data-testid="sent"]'),
+        lost: n('.server[data-company="CarmonCar"] [data-testid="lost"]'),
       };
     });
   const before = await snapshot();
@@ -124,7 +124,7 @@ test('TCP survives moderate loss by retransmitting', async ({ page }) => {
   const errors = watchErrors(page);
   const ip = await openLab(page);
   await page.locator('#loss').fill('50');
-  const b = board(page, 'Vanderides');
+  const b = board(page, 'VandeRides');
   await b.getByTestId('register').click(); // Unregister
   await expect(b.getByTestId('status')).toHaveText(/BYE|timed out/, { timeout: 20_000 });
   // With 50% loss a single exchange can still fail after 6 tries; retry until it works.
@@ -132,7 +132,7 @@ test('TCP survives moderate loss by retransmitting', async ({ page }) => {
     if ((await b.getByTestId('register').textContent()) === 'Unregister') await b.getByTestId('register').click();
     await expect(b.getByTestId('status')).toHaveText(`← BYE ${ip} 51001`, { timeout: 15_000 });
   }).toPass({ timeout: 45_000 });
-  await expect(server(page, 'Vanderides').getByTestId('listeners')).not.toContainText(`${ip}:51001`);
+  await expect(server(page, 'VandeRides').getByTestId('listeners')).not.toContainText(`${ip}:51001`);
   expect(errors).toEqual([]);
 });
 
@@ -218,7 +218,7 @@ test('the live diagram is collapsed by default and animates packets when opened'
   await panel.locator('summary').click();
   await expect(diagram).toBeVisible();
   await expect(diagram.locator('[data-node="10.0.1.1"]')).toContainText('CarmonCar');
-  await expect(diagram.locator('[data-node="10.0.1.2"]')).toContainText('Vanderides');
+  await expect(diagram.locator('[data-node="10.0.1.2"]')).toContainText('VandeRides');
   await expect(diagram.locator(`[data-node="${ip}"]`)).toContainText('This tab');
   await expect(diagram.locator(`[data-edge="10.0.1.1>${ip}"]`)).toHaveClass(/live/);
   await expect(diagram.locator('.packet.udp.ok').first()).toBeAttached({ timeout: 5_000 });
@@ -262,4 +262,17 @@ test('the live diagram switches to the compact drawing on a phone-width screen',
   await page.setViewportSize({ width: 1100, height: 844 });
   await expect(diagram).not.toHaveClass(/compact/);
   await expect(diagram).toHaveAttribute('viewBox', '0 0 800 320');
+});
+
+test('the page describes ride-sharing companies, not airlines', async ({ page }) => {
+  await openLab(page);
+  await page.locator('details.intro summary').click();
+  await page.locator('#diagram-panel summary').click();
+  const text = (await page.locator('body').innerText()).toLowerCase();
+  expect(text).not.toMatch(/airline|flight/);
+  expect(text).toContain('ride-sharing');
+  await expect(page.locator('.server[data-company="VandeRides"] h3')).toHaveText('VandeRides · 10.0.1.2');
+  const manifest = await (await page.request.get('manifest.webmanifest')).json();
+  expect(JSON.stringify(manifest).toLowerCase()).not.toMatch(/airline|flight/);
+  expect(manifest.description.toLowerCase()).toContain('ride-sharing');
 });
