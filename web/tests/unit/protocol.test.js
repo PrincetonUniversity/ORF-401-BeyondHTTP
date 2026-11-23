@@ -54,7 +54,7 @@ describe('isValidHost', () => {
 });
 
 describe('gate messages (GateReporter / GateListener)', () => {
-  const change = { airline: 'CarmonCar', destination: 'Jersey City', seats: 3, gate: 17 };
+  const change = { company: 'CarmonCar', destination: 'Jersey City', seats: 3, gate: 17 };
 
   it('formats the wire format used by the Java lab', () => {
     expect(formatGateMessage(change)).toBe('CarmonCar,Jersey City,SEAT,3,GATE,17');

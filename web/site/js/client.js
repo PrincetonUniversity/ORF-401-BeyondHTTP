@@ -5,9 +5,9 @@ export const TCP_CLIENT_TIMEOUT_MS = 20000;
 
 /**
  * @typedef {import('./server-host.js').LogEntry} LogEntry
- * @typedef {{ name: string, listeners: string[], sent: number, lost: number }} AirlineState
- * @typedef {{ conditions: import('./network.js').Conditions, airlinesState: AirlineState[] }} HostState
- * @typedef {HostState & { ip: string, airlines: { name: string, ip: string }[], controlPort: number, log: LogEntry[] }} Welcome
+ * @typedef {{ name: string, listeners: string[], sent: number, lost: number }} CompanyState
+ * @typedef {{ conditions: import('./network.js').Conditions, companiesState: CompanyState[] }} HostState
+ * @typedef {HostState & { ip: string, companies: { name: string, ip: string }[], controlPort: number, log: LogEntry[] }} Welcome
  * @typedef {{ postMessage: (m: unknown) => void, onmessage: ((e: MessageEvent) => void) | null }} PortLike
  */
 

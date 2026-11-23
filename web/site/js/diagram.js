@@ -209,10 +209,10 @@ export class LiveDiagram {
   }
 
   /**
-   * @param {{ name: string, listeners: string[] }[]} airlinesState
+   * @param {{ name: string, listeners: string[] }[]} companiesState
    */
-  setState(airlinesState) {
-    for (const a of airlinesState) {
+  setState(companiesState) {
+    for (const a of companiesState) {
       const server = this.servers.find((s) => s.name === a.name);
       if (server) this.links.set(server.ip, [...new Set(a.listeners.map(hostOf))]);
     }

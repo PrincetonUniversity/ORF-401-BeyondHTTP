@@ -2,7 +2,7 @@
 // or, where SharedWorker is unavailable, inside the page itself.
 //
 // One ServerHost plays every machine on the simulated network:
-//   - one GateReportingSystem per airline (registrar on TCP 8189 + reporter), and
+//   - one GateReportingSystem per company (registrar on TCP 8189 + reporter), and
 //   - the wire between them and every connected tab, applying loss and delay.
 
 import { CONTROL_PORT, formatGateMessage, isValidHost, parseControl } from './protocol.js';
@@ -11,7 +11,9 @@ import { ListenerRegistry } from './registry.js';
 
 /** @typedef {import('./network.js').Conditions} Conditions */
 
-export const AIRLINES = Object.freeze([
+// The Java server calls this name `airline` (GateReportingSystem, GateReporter), a leftover
+// from an earlier airline version of the lab; this is a ride-sharing company.
+export const COMPANIES = Object.freeze([
   Object.freeze({ name: 'CarmonCar', ip: '10.0.1.1', sourcePort: 49152 }),
   Object.freeze({ name: 'VandeRides', ip: '10.0.1.2', sourcePort: 49153 }),
 ]);
@@ -101,7 +103,7 @@ class Client {
   }
 }
 
-class Airline {
+class Company {
   /**
    * @param {{ name: string, ip: string, sourcePort: number }} spec
    */
@@ -134,8 +136,8 @@ export class ServerHost {
     this.seq = 0;
     /** @type {LogEntry[]} */
     this.log = [];
-    this.airlines = AIRLINES.map((spec) => new Airline(spec));
-    for (const airline of this.airlines) this.schedule(airline);
+    this.companies = COMPANIES.map((spec) => new Company(spec));
+    for (const company of this.companies) this.schedule(company);
   }
 
   /**
@@ -152,7 +154,7 @@ export class ServerHost {
     port.postMessage({
       type: 'welcome',
       ip,
-      airlines: this.airlines.map((a) => ({ name: a.name, ip: a.ip })),
+      companies: this.companies.map((a) => ({ name: a.name, ip: a.ip })),
       controlPort: CONTROL_PORT,
       log: this.log,
       ...this.snapshot(),
@@ -172,7 +174,7 @@ export class ServerHost {
   snapshot() {
     return {
       conditions: { ...this.conditions },
-      airlinesState: this.airlines.map((a) => ({
+      companiesState: this.companies.map((a) => ({
         name: a.name,
         listeners: a.registry.all().map((r) => `${r.host}:${r.port}`),
         sent: a.sent,
@@ -221,18 +223,18 @@ export class ServerHost {
         const speedChanged =
           message.conditions.speed !== undefined && message.conditions.speed !== this.conditions.speed;
         Object.assign(this.conditions, message.conditions);
-        if (speedChanged) for (const airline of this.airlines) this.schedule(airline);
+        if (speedChanged) for (const company of this.companies) this.schedule(company);
         this.broadcastState();
         break;
       }
       case 'reset':
-        for (const airline of this.airlines) {
-          airline.registry = new ListenerRegistry();
-          airline.sent = 0;
-          airline.lost = 0;
+        for (const company of this.companies) {
+          company.registry = new ListenerRegistry();
+          company.sent = 0;
+          company.lost = 0;
         }
         this.conditions = { ...DEFAULT_CONDITIONS };
-        for (const airline of this.airlines) this.schedule(airline);
+        for (const company of this.companies) this.schedule(company);
         this.broadcastState();
         break;
       case 'bye':
@@ -252,16 +254,16 @@ export class ServerHost {
     const dst = `${message.host}:${message.port}`;
     /** @param {{ ok: true, line: string } | { ok: false, error: string }} result */
     const reply = (result) => client.port.postMessage({ type: 'tcp-reply', id: message.id, ...result });
-    const airline = this.airlines.find((a) => a.ip === message.host);
+    const company = this.companies.find((a) => a.ip === message.host);
     const fate = tcpFate(this.conditions, this.env.random);
 
-    if (!airline || message.port !== CONTROL_PORT) {
+    if (!company || message.port !== CONTROL_PORT) {
       // No route: SYN goes unanswered. Refused: the host answers with RST.
-      const status = airline ? 'refused' : 'unreachable';
-      const delay = airline ? fate.totalDelayMs : 0;
+      const status = company ? 'refused' : 'unreachable';
+      const delay = company ? fate.totalDelayMs : 0;
       this.env.setTimeout(() => {
         this.record({ proto: 'TCP', src, dst, payload: message.line, status });
-        reply({ ok: false, error: airline ? 'Connection refused' : 'No route to host' });
+        reply({ ok: false, error: company ? 'Connection refused' : 'No route to host' });
       }, delay);
       return;
     }
@@ -282,7 +284,7 @@ export class ServerHost {
 
     this.env.setTimeout(() => {
       this.record({ proto: 'TCP', src, dst, payload: message.line, status: 'delivered' });
-      const answer = this.register(airline, message.line);
+      const answer = this.register(company, message.line);
       this.env.setTimeout(() => {
         this.record({ proto: 'TCP', src: dst, dst: src, payload: answer, status: 'delivered' });
         reply({ ok: true, line: answer });
@@ -293,68 +295,68 @@ export class ServerHost {
   /**
    * GateListenerRegistrar: apply one control line and return the reply line.
    *
-   * @param {Airline} airline
+   * @param {Company} company
    * @param {string} line
    */
-  register(airline, line) {
+  register(company, line) {
     const parsed = parseControl(line);
     if (!parsed.ok) return parsed.reply;
     const { host, port } = parsed;
     let answer;
     if (parsed.command === 'ADD') {
-      answer = airline.registry.add(host, port, this.env.now())
+      answer = company.registry.add(host, port, this.env.now())
         ? `HELLO ${host} ${port}`
         : 'You failed to deregister last time!';
     } else {
-      answer = airline.registry.drop(host, port) ? `BYE ${host} ${port}` : `UNABLE TO DROP ${host} ${port}`;
+      answer = company.registry.drop(host, port) ? `BYE ${host} ${port}` : `UNABLE TO DROP ${host} ${port}`;
     }
     this.broadcastState();
     return answer;
   }
 
-  /** @param {Airline} airline */
-  schedule(airline) {
-    if (airline.timer !== null) this.env.clearTimeout(airline.timer);
+  /** @param {Company} company */
+  schedule(company) {
+    if (company.timer !== null) this.env.clearTimeout(company.timer);
     // GateReporter: delay = |r.nextInt()| % 5000 + 2500 ms
     const delay = (2500 + Math.floor(this.env.random() * 5000)) / this.conditions.speed;
-    airline.timer = this.env.setTimeout(() => {
-      airline.timer = null;
-      if (!this.conditions.paused) this.report(airline);
-      this.schedule(airline);
+    company.timer = this.env.setTimeout(() => {
+      company.timer = null;
+      if (!this.conditions.paused) this.report(company);
+      this.schedule(company);
     }, delay);
   }
 
   /**
    * GateReporter.run(): one random gate change, one datagram per registered listener.
    *
-   * @param {Airline} airline
+   * @param {Company} company
    */
-  report(airline) {
+  report(company) {
     const r = this.env.random;
     const payload = formatGateMessage({
-      airline: airline.name,
+      company: company.name,
       destination: this.destinations[Math.floor(r() * this.destinations.length)],
       seats: 1 + Math.floor(r() * 5),
       gate: 1 + Math.floor(r() * 30),
     });
-    const listeners = airline.registry.all();
-    for (const listener of listeners) this.sendDatagram(airline, listener.host, listener.port, payload);
+    const listeners = company.registry.all();
+    for (const listener of listeners) this.sendDatagram(company, listener.host, listener.port, payload);
     if (listeners.length > 0) this.broadcastState();
   }
 
   /**
-   * @param {Airline} airline
+   * @param {Company} company
    * @param {string} host
    * @param {number} port
    * @param {string} payload
    */
-  sendDatagram(airline, host, port, payload) {
-    const src = `${airline.ip}:${airline.sourcePort}`;
+  sendDatagram(company, host, port, payload) {
+    const src = `${company.ip}:${company.sourcePort}`;
     const dst = `${host}:${port}`;
     const fate = udpFate(this.conditions, this.env.random);
-    airline.sent += 1;
+    company.sent += 1;
     if (fate.lost) {
-      airline.lost += 1;
+      company.lost += 1;
       this.record({ proto: 'UDP', src, dst, payload, status: 'lost' });
       return;
     }
@@ -371,9 +373,9 @@ export class ServerHost {
   }
 
   stop() {
-    for (const airline of this.airlines) {
-      if (airline.timer !== null) this.env.clearTimeout(airline.timer);
-      airline.timer = null;
+    for (const company of this.companies) {
+      if (company.timer !== null) this.env.clearTimeout(company.timer);
+      company.timer = null;
     }
   }
 }

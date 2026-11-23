@@ -23,14 +23,14 @@ async function openLab(page, path = './') {
   return (await page.locator('#my-ip').textContent()) ?? '';
 }
 
-/** @param {Page} page @param {string} airline */
-const board = (page, airline) => page.locator(`.board[data-airline="${airline}"]`);
-/** @param {Page} page @param {string} airline */
-const server = (page, airline) => page.locator(`.server[data-airline="${airline}"]`);
+/** @param {Page} page @param {string} company */
+const board = (page, company) => page.locator(`.board[data-company="${company}"]`);
+/** @param {Page} page @param {string} company */
+const server = (page, company) => page.locator(`.server[data-company="${company}"]`);
 /** @param {import('@playwright/test').Locator} loc */
 const count = async (loc) => Number(await loc.textContent());
 
-test('a tab registers with both airlines over TCP and receives UDP gate changes', async ({ page }) => {
+test('a tab registers with both companies over TCP and receives UDP gate changes', async ({ page }) => {
   const errors = watchErrors(page);
   const ip = await openLab(page);
   expect(ip).toMatch(/^10\.0\.2\.\d+$/);
@@ -41,17 +41,17 @@ test('a tab registers with both airlines over TCP and receives UDP gate changes'
     ['CarmonCar', 51000],
     ['VandeRides', 51001],
   ];
-  for (const [airline, port] of boards) {
-    await expect(board(page, airline).getByTestId('status')).toHaveText(`← HELLO ${ip} ${port}`);
-    await expect(server(page, airline).getByTestId('listeners')).toContainText(`${ip}:${port}`);
+  for (const [company, port] of boards) {
+    await expect(board(page, company).getByTestId('status')).toHaveText(`← HELLO ${ip} ${port}`);
+    await expect(server(page, company).getByTestId('listeners')).toContainText(`${ip}:${port}`);
   }
 
   await page.locator('#speed').selectOption('20');
-  for (const airline of ['CarmonCar', 'VandeRides']) {
+  for (const company of ['CarmonCar', 'VandeRides']) {
     await expect
-      .poll(() => count(board(page, airline).getByTestId('received')), { timeout: 15_000 })
+      .poll(() => count(board(page, company).getByTestId('received')), { timeout: 15_000 })
       .toBeGreaterThan(2);
-    const screen = await board(page, airline).getByTestId('screen').textContent();
+    const screen = await board(page, company).getByTestId('screen').textContent();
     const rows = (screen ?? '').split('\n');
     expect(rows[0]).toMatch(/^Destination\s+Av\. Seats\s+Gate$/);
     expect(rows[1]).toMatch(/^\S.*\s+[1-5]\s+([1-9]|[12]\d|30)$/);
@@ -104,9 +104,9 @@ test('UDP datagrams vanish under 100% loss while the server keeps sending', asyn
       /** @param {string} sel */
       const n = (sel) => Number(document.querySelector(sel)?.textContent);
       return {
-        received: n('.board[data-airline="CarmonCar"] [data-testid="received"]'),
-        sent: n('.server[data-airline="CarmonCar"] [data-testid="sent"]'),
-        lost: n('.server[data-airline="CarmonCar"] [data-testid="lost"]'),
+        received: n('.board[data-company="CarmonCar"] [data-testid="received"]'),
+        sent: n('.server[data-company="CarmonCar"] [data-testid="sent"]'),
+        lost: n('.server[data-company="CarmonCar"] [data-testid="lost"]'),
       };
     });
   const before = await snapshot();
@@ -271,7 +271,7 @@ test('the page describes ride-sharing companies, not airlines', async ({ page })
   const text = (await page.locator('body').innerText()).toLowerCase();
   expect(text).not.toMatch(/airline|flight/);
   expect(text).toContain('ride-sharing');
-  await expect(page.locator('.server[data-airline="VandeRides"] h3')).toHaveText('VandeRides · 10.0.1.2');
+  await expect(page.locator('.server[data-company="VandeRides"] h3')).toHaveText('VandeRides · 10.0.1.2');
   const manifest = await (await page.request.get('manifest.webmanifest')).json();
   expect(JSON.stringify(manifest).toLowerCase()).not.toMatch(/airline|flight/);
   expect(manifest.description.toLowerCase()).toContain('ride-sharing');

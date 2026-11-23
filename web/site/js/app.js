@@ -15,8 +15,8 @@ const LOG_ROWS = 200;
 
 // GateKeeper.java: CarmonCar on UDP 51000, VandeRides on UDP 51001.
 const BOARDS = [
-  { airline: 'CarmonCar', udpPort: 51000, logo: 'img/carmoncar.png' },
-  { airline: 'VandeRides', udpPort: 51001, logo: 'img/vanderides.png' },
+  { company: 'CarmonCar', udpPort: 51000, logo: 'img/carmoncar.png' },
+  { company: 'VandeRides', udpPort: 51001, logo: 'img/vanderides.png' },
 ];
 
 /**
@@ -51,7 +51,7 @@ function clock(t) {
 class GateBoard {
   /**
    * @param {LabClient} client
-   * @param {{ airline: string, udpPort: number, logo: string }} spec
+   * @param {{ company: string, udpPort: number, logo: string }} spec
    * @param {string} serverIp
    * @param {number} controlPort
    */
@@ -66,9 +66,9 @@ class GateBoard {
     /** @type {string[]} */
     this.lines = [];
 
-    const root = el('section', { class: 'board', 'data-airline': spec.airline });
+    const root = el('section', { class: 'board', 'data-company': spec.company });
     const head = el('header');
-    head.append(el('img', { src: spec.logo, alt: `${spec.airline} logo`, width: '273', height: '48' }));
+    head.append(el('img', { src: spec.logo, alt: `${spec.company} logo`, width: '273', height: '48' }));
     const meta = el('p', { class: 'meta' });
     meta.append(
       el('span', {}, `server ${serverIp}:${controlPort} · my UDP port ${spec.udpPort} · received `),
@@ -86,7 +86,7 @@ class GateBoard {
       class: 'screen',
       'data-testid': 'screen',
       tabindex: '0',
-      'aria-label': `${spec.airline} gate board`,
+      'aria-label': `${spec.company} gate board`,
     });
     this.screen.textContent = BOARD_HEADER;
     root.append(head, controls, this.screen);
@@ -247,14 +247,14 @@ function setupLog() {
 
 function setupConsole(
   /** @type {LabClient} */ client,
-  /** @type {{ name: string, ip: string }[]} */ airlines,
+  /** @type {{ name: string, ip: string }[]} */ companies,
   /** @type {number} */ controlPort,
 ) {
   const form = /** @type {HTMLFormElement} */ ($('#console'));
   const server = /** @type {HTMLSelectElement} */ ($('#console-server'));
   const line = /** @type {HTMLInputElement} */ ($('#console-line'));
   const out = $('#console-out');
-  for (const a of airlines) server.append(el('option', { value: a.ip }, `${a.name} (${a.ip}:${controlPort})`));
+  for (const a of companies) server.append(el('option', { value: a.ip }, `${a.name} (${a.ip}:${controlPort})`));
   line.placeholder = `ADD ${client.ip} 51000`;
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -312,11 +312,11 @@ async function main() {
 
   const renderConditions = setupConditions(client);
   const appendLog = setupLog();
-  setupConsole(client, welcome.airlines, welcome.controlPort);
+  setupConsole(client, welcome.companies, welcome.controlPort);
 
   const boards = BOARDS.map((spec) => {
-    const server = welcome.airlines.find((a) => a.name === spec.airline);
-    if (!server) throw new Error(`Host has no server for ${spec.airline}`);
+    const server = welcome.companies.find((a) => a.name === spec.company);
+    if (!server) throw new Error(`Host has no server for ${spec.company}`);
     const board = new GateBoard(client, spec, server.ip, welcome.controlPort);
     $('#boards').append(board.root);
     return board;
@@ -325,8 +325,8 @@ async function main() {
   /** @param {HostState} state */
   const renderState = (state) => {
     renderConditions(state.conditions);
-    for (const a of state.airlinesState) {
-      const card = $(`#servers [data-airline="${a.name}"]`);
+    for (const a of state.companiesState) {
+      const card = $(`#servers [data-company="${a.name}"]`);
       $('[data-testid="sent"]', card).textContent = String(a.sent);
       $('[data-testid="lost"]', card).textContent = String(a.lost);
       const list = $('ul', card);
@@ -335,13 +335,13 @@ async function main() {
           ? a.listeners.map((l) => el('li', l.startsWith(`${client.ip}:`) ? { class: 'mine' } : {}, l))
           : [el('li', { class: 'empty' }, '(none)')]),
       );
-      boards.find((b) => b.spec.airline === a.name)?.syncWithServer(a.listeners);
+      boards.find((b) => b.spec.company === a.name)?.syncWithServer(a.listeners);
     }
   };
 
   const servers = $('#servers');
-  for (const a of welcome.airlines) {
-    const card = el('section', { class: 'server', 'data-airline': a.name });
+  for (const a of welcome.companies) {
+    const card = el('section', { class: 'server', 'data-company': a.name });
     card.append(el('h3', {}, `${a.name} · ${a.ip}`));
     const stats = el('p', { class: 'meta' });
     stats.append(
@@ -357,20 +357,20 @@ async function main() {
   const diagram = new LiveDiagram(
     /** @type {HTMLDetailsElement} */ ($('#diagram-panel')),
     /** @type {SVGSVGElement} */ ($('#diagram')),
-    welcome.airlines,
+    welcome.companies,
     welcome.ip,
   );
 
   client.onState = (state) => {
     renderState(state);
-    diagram.setState(state.airlinesState);
+    diagram.setState(state.companiesState);
   };
   client.onLog = (entry) => {
     appendLog(entry);
     diagram.packet(entry);
   };
   renderState(welcome);
-  diagram.setState(welcome.airlinesState);
+  diagram.setState(welcome.companiesState);
   for (const entry of welcome.log) appendLog(entry);
 
   window.addEventListener('pagehide', () => {
