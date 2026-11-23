@@ -1,7 +1,7 @@
 {
   "name": "ORF 401 Gate Information Lab",
   "short_name": "Gate Lab",
-  "description": "Lab 5 (Beyond HTTP): TCP registration and UDP gate broadcasts on a simulated network.",
+  "description": "Lab 5 (Beyond HTTP): ride-sharing gate and seat updates over TCP registration and UDP broadcasts on a simulated network.",
   "id": "./",
   "start_url": "./",
   "scope": "./",

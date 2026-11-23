@@ -51,7 +51,7 @@ describe('connect', () => {
       controlPort: 8189,
       airlines: [
         { name: 'CarmonCar', ip: '10.0.1.1' },
-        { name: 'Vanderides', ip: '10.0.1.2' },
+        { name: 'VandeRides', ip: '10.0.1.2' },
       ],
       conditions: { loss: 0, paused: false, speed: 1 },
     });

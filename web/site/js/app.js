@@ -13,10 +13,10 @@ import { LIMITS } from './network.js';
 const BOARD_LINES = 200;
 const LOG_ROWS = 200;
 
-// GateKeeper.java: CarmonCar on UDP 51000, Vanderides on UDP 51001.
+// GateKeeper.java: CarmonCar on UDP 51000, VandeRides on UDP 51001.
 const BOARDS = [
   { airline: 'CarmonCar', udpPort: 51000, logo: 'img/carmoncar.png' },
-  { airline: 'Vanderides', udpPort: 51001, logo: 'img/vanderides.png' },
+  { airline: 'VandeRides', udpPort: 51001, logo: 'img/vanderides.png' },
 ];
 
 /**

@@ -13,7 +13,7 @@ import { ListenerRegistry } from './registry.js';
 
 export const AIRLINES = Object.freeze([
   Object.freeze({ name: 'CarmonCar', ip: '10.0.1.1', sourcePort: 49152 }),
-  Object.freeze({ name: 'Vanderides', ip: '10.0.1.2', sourcePort: 49153 }),
+  Object.freeze({ name: 'VandeRides', ip: '10.0.1.2', sourcePort: 49153 }),
 ]);
 
 export const CLIENT_SUBNET = '10.0.2.';

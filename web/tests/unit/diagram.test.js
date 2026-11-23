@@ -3,7 +3,7 @@ import { COMPACT_VIEW, MAX_CLIENT_NODES, VIEW, hostOf, layout, packetStyle } fro
 
 const SERVERS = [
   { name: 'CarmonCar', ip: '10.0.1.1' },
-  { name: 'Vanderides', ip: '10.0.1.2' },
+  { name: 'VandeRides', ip: '10.0.1.2' },
 ];
 
 /** @param {string} status @param {'TCP' | 'UDP'} proto */

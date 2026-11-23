@@ -6,7 +6,7 @@
     <title>Gate Information Lab</title>
     <meta
       name="description"
-      content="ORF 401 Lab 5 (Beyond HTTP) in the browser: TCP registration and UDP gate-change broadcasts on a simulated network."
+      content="ORF 401 Lab 5 (Beyond HTTP) in the browser: ride-sharing companies push gate and seat updates to riders over TCP registration and UDP broadcasts on a simulated network."
     />
     <meta name="theme-color" content="#1f3a5f" />
     <link rel="manifest" href="manifest.webmanifest" />
@@ -34,10 +34,12 @@
       <details class="intro">
         <summary>What is this?</summary>
         <p>
-          This is the Java Lab 5 rebuilt to run entirely in your browser. Each airline server keeps a table of
-          listeners. A client joins over <strong>TCP port 8189</strong> by sending
+          This is the Java Lab 5 rebuilt to run entirely in your browser. Two ride-sharing companies, CarmonCar and
+          VandeRides, run shared rides from numbered pickup gates to towns across New Jersey. Each company's server
+          keeps a table of listeners. A rider's GateKeeper client joins over <strong>TCP port 8189</strong> by sending
           <code>ADD &lt;ip&gt; &lt;port&gt;</code>; the server answers <code>HELLO</code>. Every few seconds the server
-          sends each listener a <strong>UDP</strong> datagram such as <code>CarmonCar,Newark,SEAT,3,GATE,17</code>.
+          sends each listener a <strong>UDP</strong> datagram such as <code>CarmonCar,Newark,SEAT,3,GATE,17</code>: the
+          ride to Newark has 3 seats available and leaves from gate 17.
         </p>
         <p>
           Browsers cannot open real sockets, so the network is simulated. The rules are the same: TCP retransmits lost
@@ -57,7 +59,7 @@
           id="diagram"
           class="diagram"
           role="img"
-          aria-label="Animated diagram of packets between servers and clients"
+          aria-label="Animated diagram of packets between ride-sharing company servers and rider clients"
         ></svg>
         <ul class="legend">
           <li><span class="swatch tcp ok"></span>TCP delivered</li>
@@ -74,7 +76,7 @@
       </section>
 
       <section aria-labelledby="servers-h">
-        <h2 id="servers-h">Servers: registered listeners</h2>
+        <h2 id="servers-h">Ride-sharing company servers: registered listeners</h2>
         <div id="servers" class="grid"></div>
       </section>
 

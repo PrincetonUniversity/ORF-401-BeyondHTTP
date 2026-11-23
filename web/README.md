@@ -11,9 +11,9 @@ Browsers cannot open raw TCP or UDP sockets. The demo keeps the lab's protocol a
 
 | Java lab                                                      | Web demo                                                                |
 | ------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `GateReportingSystem` per airline (registrar + reporter)      | `ServerHost` in a `SharedWorker`, shared by every open tab              |
+| `GateReportingSystem` per company (registrar + reporter)      | `ServerHost` in a `SharedWorker`, shared by every open tab              |
 | TCP 8189: `ADD <ip> <port>` → `HELLO`, `DROP` → `BYE`         | Same lines and replies, with retransmission and timeout on a lossy link |
-| UDP datagrams `AIRLINE,DEST,SEAT,n,GATE,n` every 2.5–7.5 s    | Same payload and cadence, sent once and silently lost under packet loss |
+| UDP datagrams `COMPANY,DEST,SEAT,n,GATE,n` every 2.5–7.5 s    | Same payload and cadence, sent once and silently lost under packet loss |
 | `GateKeeper` with two `GateInformationBoard`s (51000 / 51001) | Two boards per tab, each tab gets its own address on `10.0.2.0/24`      |
 | Wireshark                                                     | Packet log showing every TCP exchange and UDP datagram                  |
 
@@ -26,7 +26,7 @@ Android) the servers run inside the page and the network covers that tab only. A
   - `js/protocol.js`: wire formats, ported from `GateListenerRegistrar`, `GateReporter` and `GateListener`.
   - `js/registry.js`: `GateListenerDatabase`.
   - `js/network.js`: loss, latency, jitter and the TCP retransmission model.
-  - `js/server-host.js`: the airline servers and the simulated wire.
+  - `js/server-host.js`: the ride-sharing company servers and the simulated wire.
   - `js/client.js`, `js/app.js`: tab-side socket API and UI.
   - `js/diagram.js`: collapsible animated SVG diagram of live packets (idle while collapsed).
   - `sw.js`: precaches every file for offline use.

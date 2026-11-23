@@ -39,7 +39,7 @@ test('a tab registers with both airlines over TCP and receives UDP gate changes'
   /** @type {[string, number][]} */
   const boards = [
     ['CarmonCar', 51000],
-    ['Vanderides', 51001],
+    ['VandeRides', 51001],
   ];
   for (const [airline, port] of boards) {
     await expect(board(page, airline).getByTestId('status')).toHaveText(`← HELLO ${ip} ${port}`);
@@ -47,7 +47,7 @@ test('a tab registers with both airlines over TCP and receives UDP gate changes'
   }
 
   await page.locator('#speed').selectOption('20');
-  for (const airline of ['CarmonCar', 'Vanderides']) {
+  for (const airline of ['CarmonCar', 'VandeRides']) {
     await expect
       .poll(() => count(board(page, airline).getByTestId('received')), { timeout: 15_000 })
       .toBeGreaterThan(2);
@@ -124,7 +124,7 @@ test('TCP survives moderate loss by retransmitting', async ({ page }) => {
   const errors = watchErrors(page);
   const ip = await openLab(page);
   await page.locator('#loss').fill('50');
-  const b = board(page, 'Vanderides');
+  const b = board(page, 'VandeRides');
   await b.getByTestId('register').click(); // Unregister
   await expect(b.getByTestId('status')).toHaveText(/BYE|timed out/, { timeout: 20_000 });
   // With 50% loss a single exchange can still fail after 6 tries; retry until it works.
@@ -132,7 +132,7 @@ test('TCP survives moderate loss by retransmitting', async ({ page }) => {
     if ((await b.getByTestId('register').textContent()) === 'Unregister') await b.getByTestId('register').click();
     await expect(b.getByTestId('status')).toHaveText(`← BYE ${ip} 51001`, { timeout: 15_000 });
   }).toPass({ timeout: 45_000 });
-  await expect(server(page, 'Vanderides').getByTestId('listeners')).not.toContainText(`${ip}:51001`);
+  await expect(server(page, 'VandeRides').getByTestId('listeners')).not.toContainText(`${ip}:51001`);
   expect(errors).toEqual([]);
 });
 
@@ -218,7 +218,7 @@ test('the live diagram is collapsed by default and animates packets when opened'
   await panel.locator('summary').click();
   await expect(diagram).toBeVisible();
   await expect(diagram.locator('[data-node="10.0.1.1"]')).toContainText('CarmonCar');
-  await expect(diagram.locator('[data-node="10.0.1.2"]')).toContainText('Vanderides');
+  await expect(diagram.locator('[data-node="10.0.1.2"]')).toContainText('VandeRides');
   await expect(diagram.locator(`[data-node="${ip}"]`)).toContainText('This tab');
   await expect(diagram.locator(`[data-edge="10.0.1.1>${ip}"]`)).toHaveClass(/live/);
   await expect(diagram.locator('.packet.udp.ok').first()).toBeAttached({ timeout: 5_000 });
@@ -262,4 +262,17 @@ test('the live diagram switches to the compact drawing on a phone-width screen',
   await page.setViewportSize({ width: 1100, height: 844 });
   await expect(diagram).not.toHaveClass(/compact/);
   await expect(diagram).toHaveAttribute('viewBox', '0 0 800 320');
+});
+
+test('the page describes ride-sharing companies, not airlines', async ({ page }) => {
+  await openLab(page);
+  await page.locator('details.intro summary').click();
+  await page.locator('#diagram-panel summary').click();
+  const text = (await page.locator('body').innerText()).toLowerCase();
+  expect(text).not.toMatch(/airline|flight/);
+  expect(text).toContain('ride-sharing');
+  await expect(page.locator('.server[data-airline="VandeRides"] h3')).toHaveText('VandeRides · 10.0.1.2');
+  const manifest = await (await page.request.get('manifest.webmanifest')).json();
+  expect(JSON.stringify(manifest).toLowerCase()).not.toMatch(/airline|flight/);
+  expect(manifest.description.toLowerCase()).toContain('ride-sharing');
 });
