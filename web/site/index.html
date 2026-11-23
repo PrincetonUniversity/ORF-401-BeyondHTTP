@@ -46,6 +46,28 @@
         </p>
       </details>
 
+      <details id="diagram-panel" class="panel diagram-panel">
+        <summary><h2>Live network diagram</h2></summary>
+        <p class="hint">
+          Every packet in the log, animated from sender to receiver. Squares are TCP, circles are UDP. Solid lines join
+          a server to the clients it has registered. Red packets were lost on the wire and never arrive; amber ones are
+          TCP retransmissions. Animation timing is slowed down for visibility.
+        </p>
+        <svg
+          id="diagram"
+          class="diagram"
+          role="img"
+          aria-label="Animated diagram of packets between servers and clients"
+        ></svg>
+        <ul class="legend">
+          <li><span class="swatch tcp ok"></span>TCP delivered</li>
+          <li><span class="swatch udp ok"></span>UDP delivered</li>
+          <li><span class="swatch tcp warn"></span>TCP retransmit</li>
+          <li><span class="swatch udp lost"></span>Lost</li>
+          <li><span class="swatch udp muted"></span>No listener</li>
+        </ul>
+      </details>
+
       <section aria-labelledby="clients-h">
         <h2 id="clients-h">Client: GateKeeper</h2>
         <div id="boards" class="grid"></div>

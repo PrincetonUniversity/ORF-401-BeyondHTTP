@@ -17,6 +17,7 @@ const PRECACHE = [
   'img/icon-512.png',
   'js/app.js',
   'js/client.js',
+  'js/diagram.js',
   'js/host-boot.js',
   'js/network.js',
   'js/protocol.js',
